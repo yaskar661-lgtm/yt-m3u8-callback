@@ -6,11 +6,11 @@ import threading
 app = Flask(__name__)
 
 LINK_CACHE = {}
-PENDING_REQUESTS = {}  # Bekleyen oynatıcı thread'lerini tutmak için
 REQUEST_QUEUE = []     # Yerel scriptin okuyacağı kuyruk
 LOCK = threading.Condition()
 
-RENDER_SECRET = os.getenv("API_SECRET_KEY", "gizli_sifreniz")
+# Render panelindeki Environment'tan şifreyi okur
+RENDER_SECRET = os.getenv("API_SECRET_KEY", "x9T!sK_2026_secure_token_677")
 
 @app.route('/stream/<channel>')
 def stream_redirect(channel):
@@ -24,7 +24,6 @@ def stream_redirect(channel):
             REQUEST_QUEUE.append(channel)
         
         # Yerel scriptin linki getirmesi için oynatıcıyı maksimum 15 saniye beklet (Long-Polling)
-        # Yerel script /update endpoint'ine POST attığı an bu bekleyiş anında serbest kalacak.
         locked = LOCK.wait(timeout=15)
         
     # 3. Bekleme süresi bittiğinde link cache'e gelmiş mi kontrol et
